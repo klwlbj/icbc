@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatryst\ICBCPay\src;
+namespace FatKlwlbjryst\Icbc\encryption;
 
 class UiIcbcClient extends DefaultIcbcClient
 {

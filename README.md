@@ -3,10 +3,10 @@
 
 ### 一、 安装  
 1. 安装  
-```composer require fatryst/icbc```
+```composer require klwlbj/icbc```
 
 2. 发布配置文件`icbc.php`  
-```php artisan vendor:publish --provider="Fatryst\ICBCPay\ICBCPayServiceProvider"```  
+```php artisan vendor:publish --provider="Klwlbj\ICBCPay\ICBCPayServiceProvider"```  
 发布时 config/icbc.php 配置文件 包含：
 ```angular2
 return [
@@ -49,7 +49,7 @@ return [
 ```angular2
 'providers' => [
     // ...
-    Fatryst\ICBCPay\ICBCPayServiceProvider::class,
+    Klwlbj\ICBCPay\ICBCPayServiceProvider::class,
 ];
 ```
 

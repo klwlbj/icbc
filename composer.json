@@ -1,6 +1,6 @@
 {
-	"name": "fatryst/icbc",
-	"description": "工行 商户收单服务 二维码扫码支付",
+	"name": "klwlbj/icbc",
+	"description": "基于fatryst/icbc，工行 商户收单服务 二维码扫码支付",
 	"keywords": [
 		"icbc",
 		"工行",
@@ -10,28 +10,28 @@
 		"pay",
 		"qrcode"
 	],
-	"homepage": "https://github.com/fatryst/icbc",
+	"homepage": "https://github.com/klwlbj/icbc",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
 		{
-			"name": "fa",
-			"email": "zengfa@hotmail.com"
+			"name": "klwlbj",
+			"email": "kunshengshi@gmail.com"
 		}
 	],
 	"minimum-stability": "dev",
 	"require": {
-		"php": ">=7.0.0"
+		"php": ">=8.0.0"
 	},
 	"autoload": {
 		"psr-4": {
-			"Fatryst\\ICBCPay\\": "src/"
+			"Klwlbj\\Icbc\\": "src/"
 		}
 	},
 	"extra": {
 		"laravel": {
 			"providers": [
-				"Fatryst\\ICBCPay\\ICBCPayServiceProvider"
+				"Klwlbj\\Icbc\\ICBCPayServiceProvider"
 			]
 		}
 	}

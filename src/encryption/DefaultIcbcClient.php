@@ -1,6 +1,6 @@
 <?php
 
-namespace Fatryst\ICBCPay\src;
+namespace Klwlbj\Icbc\encryption;
 
 use Exception;
 

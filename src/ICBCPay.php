@@ -12,50 +12,49 @@
  * file that was distributed with this source code.
  */
 
-
-namespace Fatryst\ICBCPay;
-
+namespace Klwlbj\Icbc;
 
 use Faker\Provider\Uuid;
-use Fatryst\ICBCPay\src\DefaultIcbcClient;
-use Fatryst\ICBCPay\src\IcbcConstants;
+use Klwlbj\Icbc\encryption\IcbcConstants;
+use Klwlbj\Icbc\encryption\DefaultIcbcClient;
 
 class ICBCPay
 {
-    private $appId;
-    private $privateKey;
-    private $signType;
-    private $charset;
-    private $format;
-    private $icbcPulicKey;
-    private $encryptKey;
-    private $encryptType;
-    private $ca;
-    private $password;
-    private $mer_id;
-    private $store_code;
-    private $client;
+    private string $appId;
+    private string $privateKey;
+    private string $signType;
+    private string $charset;
+    private string $format;
+    private string $icbcPulicKey;
+    private string $encryptKey;
+    private string $encryptType;
+    private string $ca;
+    private string $password;
+    private string $mer_id;
+    private string $store_code;
+    private DefaultIcbcClient $client;
 
-    function __construct($appId = null, $mer_id = null, $store_code = null, $privateKey = null, $icbcPulicKey = null, $signType = null, $encryptKey = null, $encryptType = null, $charset = null, $format = null, $ca = null, $password = null)
+    public function __construct($appId = null, $mer_id = null, $store_code = null, $privateKey = null, $icbcPulicKey = null, $signType = null, $encryptKey = null, $encryptType = null, $charset = null, $format = null, $ca = '', $password = null)
     {
-        $this->appId = $appId ?? config('icbc.appId', null);
-        $this->mer_id = $mer_id ?? config('icbc.mer_id', null);
-        $this->store_code = $store_code ?? config('icbc.store_code', null);
-        $this->privateKey = $privateKey ?? config('icbc.privateKey', null);
-        $this->icbcPulicKey = $icbcPulicKey ?? config('icbc.icbcPulicKey', null);
-        $this->encryptKey = $encryptKey ?? config('icbc.encryptKey', null);
-        $this->encryptType = $icbcPulicKey ?? config('icbc.encryptType', null);
-        $this->password = $icbcPulicKey ?? config('icbc.password', null);
-        $this->signType = $icbcPulicKey ?? config('icbc.signType', IcbcConstants::$SIGN_TYPE_RSA2);
-        $this->charset = $icbcPulicKey ?? config('icbc.charset', IcbcConstants::$CHARSET_UTF8);
-        $this->format = $icbcPulicKey ?? config('icbc.format', IcbcConstants::$FORMAT_JSON);
-        $this->ca = preg_replace("/\s*|\t/", "", $ca) ?? null;
-
-        $this->ca = $ca;
-        $this->password = $password;
+        $this->appId        = $appId ?? config('icbc.appId', '');
+        $this->mer_id       = $mer_id ?? config('icbc.mer_id', '');
+        $this->store_code   = $store_code ?? config('icbc.store_code', '');
+        $this->privateKey   = $privateKey ?? config('icbc.privateKey', '');
+        $this->icbcPulicKey = $icbcPulicKey ?? config('icbc.icbcPulicKey', '');
+        $this->encryptKey   = $encryptKey ?? config('icbc.encryptKey', '');
+        $this->encryptType  = $icbcPulicKey ?? config('icbc.encryptType', '');
+        $this->password     = $icbcPulicKey ?? config('icbc.password', '');
+        $this->signType     = $icbcPulicKey ?? config('icbc.signType', IcbcConstants::$SIGN_TYPE_RSA2);
+        $this->charset      = $icbcPulicKey ?? config('icbc.charset', IcbcConstants::$CHARSET_UTF8);
+        $this->format       = $icbcPulicKey ?? config('icbc.format', IcbcConstants::$FORMAT_JSON);
+        $this->ca           = preg_replace("/\s*|\t/", "", $ca) ?? '';
 
         $this->client = new DefaultIcbcClient($this->appId, $this->privateKey, $this->signType, $this->charset, $this->format, $this->icbcPulicKey, $this->encryptKey, $this->encryptType, $this->ca, $this->password);
+    }
 
+    public function test()
+    {
+        return 'test';
     }
 
     /**
@@ -75,30 +74,29 @@ class ICBCPay
      */
     public function generate($out_trade_no, $order_amt, $trade_date, $trade_time, $pay_expire, $tporder_create_ip, $notify_flag, $attach = null, $sp_flag = '0', $notify_url = '127.0.0.1')
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.generate', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.generate', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "mer_id" => $this->mer_id,
-                "store_code" => $this->store_code,
-                "out_trade_no" => $out_trade_no,
-                "order_amt" => $order_amt,
-                "trade_date" => $trade_date,
-                "trade_time" => $trade_time,
-                "pay_expire" => $pay_expire,
-                "notify_flag" => $notify_flag,
+            "biz_content"   => [
+                "mer_id"            => $this->mer_id,
+                "store_code"        => $this->store_code,
+                "out_trade_no"      => $out_trade_no,
+                "order_amt"         => $order_amt,
+                "trade_date"        => $trade_date,
+                "trade_time"        => $trade_time,
+                "pay_expire"        => $pay_expire,
+                "notify_flag"       => $notify_flag,
                 "tporder_create_ip" => $tporder_create_ip,
 
-                "attach" => $attach,
-                "sp_flag" => $sp_flag,
-                "notify_url" => $notify_url,
-            )
-        );
-
+                "attach"            => $attach,
+                "sp_flag"           => $sp_flag,
+                "notify_url"        => $notify_url,
+            ],
+        ];
 
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
 
@@ -115,25 +113,24 @@ class ICBCPay
      */
     public function reject($reject_no, $reject_amt, $cust_id = null, $out_trade_no = null, $order_id = null, $oper_id = null)
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.reject', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.reject', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "mer_id" => $this->mer_id,
-                "reject_no" => $reject_no,
-                "reject_amt" => $reject_amt,
-                "cust_id" => $cust_id,
+            "biz_content"   => [
+                "mer_id"       => $this->mer_id,
+                "reject_no"    => $reject_no,
+                "reject_amt"   => $reject_amt,
+                "cust_id"      => $cust_id,
                 "out_trade_no" => $out_trade_no,    //该字段非必输项,out_trade_no和order_id选一项上送即可
-                "order_id" => $order_id,            //该字段非必输项,out_trade_no和order_id选一项上送即可
-                "oper_id" => $oper_id,
-            )
-        );
+                "order_id"     => $order_id,            //该字段非必输项,out_trade_no和order_id选一项上送即可
+                "oper_id"      => $oper_id,
+            ],
+        ];
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
-
 
     /**
      * 二维码查询
@@ -145,19 +142,19 @@ class ICBCPay
      */
     public function query($cust_id = null, $out_trade_no = null, $order_id = null)
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.query', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.query', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "mer_id" => $this->mer_id,
-                "cust_id" => $cust_id,              //该字段非必输项
+            "biz_content"   => [
+                "mer_id"       => $this->mer_id,
+                "cust_id"      => $cust_id,              //该字段非必输项
                 "out_trade_no" => $out_trade_no,    //该字段非必输项,out_trade_no和order_id选一项上送即可
-                "order_id" => $order_id,            //该字段非必输项,out_trade_no和order_id选一项上送即可
-            )
-        );
+                "order_id"     => $order_id,            //该字段非必输项,out_trade_no和order_id选一项上送即可
+            ],
+        ];
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
 
@@ -173,22 +170,21 @@ class ICBCPay
      */
     public function pay($qr_code, $out_trade_no, $order_amt, $trade_date, $trade_time)
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.pay', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.pay', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "qr_code" => $qr_code,
-                "mer_id" => $this->mer_id,
+            "biz_content"   => [
+                "qr_code"      => $qr_code,
+                "mer_id"       => $this->mer_id,
                 "out_trade_no" => $out_trade_no,
-                "order_amt" => $order_amt,
-                "trade_date" => $trade_date,
-                "trade_time" => $trade_time
-            )
-
-        );
+                "order_amt"    => $order_amt,
+                "trade_date"   => $trade_date,
+                "trade_time"   => $trade_time,
+            ],
+        ];
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
 
@@ -203,25 +199,24 @@ class ICBCPay
      * @return mixed
      * @throws \Exception
      */
-    public function reverse($out_trade_no, $cust_id = null, $order_id = null, $reject_no = null, $reject_amt = null, $oper_id = null)
+    public function reverse(string $out_trade_no, $cust_id = null, $order_id = null, $reject_no = null, $reject_amt = null, $oper_id = null)
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.reverse', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.reverse', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "mer_id" => $this->mer_id,
+            "biz_content"   => [
+                "mer_id"       => $this->mer_id,
                 "out_trade_no" => $out_trade_no,
-                "cust_id" => $cust_id,              //该字段非必输项
-                "order_id" => $order_id,            //该字段非必输项
-                "reject_no" => $reject_no,          //该字段非必输项
-                "reject_amt" => $reject_amt,        //该字段非必输项
-                "oper_id" => $oper_id               //该字段非必输项
-            )
-
-        );
+                "cust_id"      => $cust_id,              //该字段非必输项
+                "order_id"     => $order_id,            //该字段非必输项
+                "reject_no"    => $reject_no,          //该字段非必输项
+                "reject_amt"   => $reject_amt,        //该字段非必输项
+                "oper_id"      => $oper_id,               //该字段非必输项
+            ],
+        ];
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
 
@@ -236,20 +231,20 @@ class ICBCPay
      */
     public function rejectQuery($out_trade_no, $order_id, $reject_no, $cust_id = null)
     {
-        $request = array(
-            "serviceUrl" => config('icbc.url.qrcode.reject_query', null),
-            "method" => 'POST',
+        $request = [
+            "serviceUrl"    => config('icbc.url.qrcode.reject_query', null),
+            "method"        => 'POST',
             "isNeedEncrypt" => false,
-            "biz_content" => array(
-                "mer_id" => $this->mer_id,
+            "biz_content"   => [
+                "mer_id"       => $this->mer_id,
                 "out_trade_no" => $out_trade_no,
-                "order_id" => $order_id,
-                "reject_no" => $reject_no,
-                "cust_id" => $cust_id
-            )
-        );
+                "order_id"     => $order_id,
+                "reject_no"    => $reject_no,
+                "cust_id"      => $cust_id,
+            ],
+        ];
         $msgId = Uuid::uuid();
-        $resp = $this->client->execute($request, $msgId, '');
+        $resp  = $this->client->execute($request, $msgId, '');
         return json_decode($resp, true);
     }
 }

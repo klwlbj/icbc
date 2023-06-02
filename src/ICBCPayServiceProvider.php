@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of fatryst/icbc.
+ * This file is part of klwlbj/icbc.
  *
  * (c) fa <zengfa@hotmail.com>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Fatryst\ICBCPay;
+namespace Klwlbj\Icbc;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -27,8 +27,9 @@ class ICBCPayServiceProvider extends ServiceProvider
 
     public function register()
     {
+        // 单例模式
         $this->app->singleton('icbc', function () {
-            return new ICBCPay;
+            return new ICBCPay();
         });
     }
 
