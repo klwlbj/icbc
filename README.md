@@ -45,13 +45,6 @@ return [
     ]
 ];
 ```
-在 Laravel 5.5 及以上版本，服务提供商将自动获得注册。 在旧版本的框架中，只需在 config/app.php 文件中添加服务提供者即可：
-```angular2
-'providers' => [
-    // ...
-    Klwlbj\ICBCPay\ICBCPayServiceProvider::class,
-];
-```
 
 ### 二、 使用
 1. 根据需要修改配置文件，配置文件中的配置均为必填，不能为空

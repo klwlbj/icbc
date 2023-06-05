@@ -15,8 +15,11 @@
 namespace Klwlbj\Icbc;
 
 use Faker\Provider\Uuid;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 use Klwlbj\Icbc\encryption\IcbcConstants;
 use Klwlbj\Icbc\encryption\DefaultIcbcClient;
+use Illuminate\Validation\ValidationException;
 
 class ICBCPay
 {
@@ -32,6 +35,20 @@ class ICBCPay
     private string $password;
     private string $mer_id;
     private string $store_code;
+    private array $generateRule = [
+        'mer_id'                    => 'required|string|size:15',
+        'out_trade_no'              => 'required|string|size:35',
+        'order_amt'                 => 'required|integer|min:0|max:99999999999999999',
+        'trade_date'                => 'required|date_format:Ymd',
+        'trade_time'                => 'required|date_format:H:i:s',
+        'pay_expire'                => 'required|int|min:0|max:3600',
+        'notify_flag'               => 'required|int|between:0,1',
+        'tporder_create_ip'         => 'required|ip',
+
+        'terminal_info'             => 'required|array',
+        'terminal_info.device_type' => 'required|int',
+        'terminal_info.device_id'   => 'required|string',
+    ];
     private DefaultIcbcClient $client;
 
     public function __construct($appId = null, $mer_id = null, $store_code = null, $privateKey = null, $icbcPulicKey = null, $signType = null, $encryptKey = null, $encryptType = null, $charset = null, $format = null, $ca = '', $password = null)
@@ -52,46 +69,60 @@ class ICBCPay
         $this->client = new DefaultIcbcClient($this->appId, $this->privateKey, $this->signType, $this->charset, $this->format, $this->icbcPulicKey, $this->encryptKey, $this->encryptType, $this->ca, $this->password);
     }
 
-    public function test()
+    public function test(): string
     {
         return 'test';
     }
 
     /**
-     * 二维码生成
-     * @param $out_trade_no
-     * @param $order_amt
-     * @param $trade_date
-     * @param $trade_time
-     * @param $pay_expire
-     * @param $tporder_create_ip
-     * @param $notify_flag
-     * @param null $attach
-     * @param string $sp_flag
-     * @param string $notify_url
-     * @return mixed
-     * @throws \Exception
+     * @param array|Collection $params
+     * @param array $rules
+     * @param array $message
+     * @return void
+     * @throws ValidationException
      */
-    public function generate($out_trade_no, $order_amt, $trade_date, $trade_time, $pay_expire, $tporder_create_ip, $notify_flag, $attach = null, $sp_flag = '0', $notify_url = '127.0.0.1')
+    public function validateParams(
+        array | Collection $params,
+        array $rules = [],
+    ) {
+        if ($params instanceof Collection) {
+            $params = $params->toArray();
+        }
+
+        $validator = Validator::make($params, $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+    }
+
+    /**
+     * 二维码生成
+     * @param array $params
+     * @return mixed
+     * @throws ValidationException
+     */
+    public function generate(array $params = [])
     {
+        // 检测参数格式
+        $this->validateParams($params, $this->generateRule);
+
         $request = [
-            "serviceUrl"    => config('icbc.url.qrcode.generate', null),
+            "serviceUrl"    => config('icbc.url.qrcode.generate'),
             "method"        => 'POST',
             "isNeedEncrypt" => false,
             "biz_content"   => [
                 "mer_id"            => $this->mer_id,
-                "store_code"        => $this->store_code,
-                "out_trade_no"      => $out_trade_no,
-                "order_amt"         => $order_amt,
-                "trade_date"        => $trade_date,
-                "trade_time"        => $trade_time,
-                "pay_expire"        => $pay_expire,
-                "notify_flag"       => $notify_flag,
-                "tporder_create_ip" => $tporder_create_ip,
+                "out_trade_no"      => $params['out_trade_no'],
+                "order_amt"         => $params['order_amt'],
+                "trade_date"        => $params['trade_date'],
+                "trade_time"        => $params['trade_time'],
+                "pay_expire"        => $params['pay_expire'],
+                "notify_flag"       => $params['notify_flag'],
+                "terminal_info"     => $params['terminal_info'],
+                "tporder_create_ip" => $params['tporder_create_ip'],
 
-                "attach"            => $attach,
-                "sp_flag"           => $sp_flag,
-                "notify_url"        => $notify_url,
+                "store_code"        => $this->store_code,
             ],
         ];
 

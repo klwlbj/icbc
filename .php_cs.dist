@@ -1,0 +1,54 @@
+<?php
+
+return (new PhpCsFixer\Config())
+    ->setRules([
+        '@PSR12'                                      => true,
+        'array_indentation'                           => true,
+        'array_syntax'                                => ['syntax' => 'short'],
+        'no_multiline_whitespace_around_double_arrow' => true,
+        'no_trailing_comma_in_singleline_array'       => true,
+        'no_whitespace_before_comma_in_array'         => ['after_heredoc' => true],
+        'trim_array_spaces'                           => true,
+        'whitespace_after_comma_in_array'             => true,
+        'magic_constant_casing'                       => true,
+        'magic_method_casing'                         => true,
+        'native_function_casing'                      => true,
+        'native_function_type_declaration_casing'     => true,
+        'cast_spaces'                                 => ['space' => 'single'],
+        'class_attributes_separation'                 => ['elements' => ['method' => 'one']],
+        'no_empty_comment'                            => true,
+        'trailing_comma_in_multiline'                 => ['after_heredoc' => true],
+        'no_useless_else'                             => true,
+        'function_typehint_space'                     => true,
+        'lambda_not_used_import'                      => true,
+        'no_unused_imports'                           => true,
+        'combine_consecutive_issets'                  => true,
+        'combine_consecutive_unsets'                  => true,
+        'explicit_indirect_variable'                  => true,
+        'binary_operator_spaces'                      => ['operators' => [
+            '='  => 'align_single_space_minimal',
+            '=>' => 'align_single_space_minimal_by_scope',
+            '.=' => 'align_single_space_minimal',
+            '+=' => 'align_single_space_minimal',
+            '-=' => 'align_single_space_minimal',
+        ]],
+
+        'concat_space'                       => ['spacing' => 'one'],
+        'object_operator_without_whitespace' => true,
+        'no_leading_namespace_whitespace'    => true,
+        // 'standardize_increment' => true,
+        'unary_operator_spaces'                      => true,
+        'no_empty_statement'                         => true,
+        'no_singleline_whitespace_before_semicolons' => true,
+        'explicit_string_variable'                   => true,
+        'no_extra_blank_lines'                       => ['tokens' => [
+            'case', 'continue', 'curly_brace_block', 'default', 'extra', 'parenthesis_brace_block', 'square_brace_block', 'switch', 'throw', 'use', 'use_trait',
+        ]],
+        'no_spaces_around_offset' => [
+            'positions' => ['inside', 'outside'],
+        ],
+        'ordered_imports' => ['sort_algorithm' => 'length'],
+    ])
+// ->setIndent("\t")
+    ->setLineEnding("\n")
+;
