@@ -137,11 +137,9 @@ class ICBCPay
 
     /**
      * 二维码查询
-     * @param null $cust_id
-     * @param null $out_trade_no
-     * @param null $order_id
+     * @param array $params
      * @return mixed
-     * @throws \Exception
+     * @throws ValidationException
      */
     public function query(array $params = [])
     {
@@ -177,34 +175,6 @@ class ICBCPay
             "method"        => 'POST',
             "isNeedEncrypt" => false,
             "biz_content"   => $params,
-        ];
-        $msgId = $this->uuidGenerator->uuid3();
-        $resp  = $this->client->execute($request, $msgId, '');
-        return json_decode($resp, true);
-    }
-
-    /**
-     * 二维码退款查询
-     * @param $out_trade_no
-     * @param $order_id
-     * @param $reject_no
-     * @param null $cust_id
-     * @return mixed
-     * @throws \Exception
-     */
-    public function rejectQuery($out_trade_no, $order_id, $reject_no, $cust_id = null)
-    {
-        $request = [
-            "serviceUrl"    => config('icbc.url.qrcode.reject_query', null),
-            "method"        => 'POST',
-            "isNeedEncrypt" => false,
-            "biz_content"   => [
-                "mer_id"       => $this->mer_id,
-                "out_trade_no" => $out_trade_no,
-                "order_id"     => $order_id,
-                "reject_no"    => $reject_no,
-                "cust_id"      => $cust_id,
-            ],
         ];
         $msgId = $this->uuidGenerator->uuid3();
         $resp  = $this->client->execute($request, $msgId, '');
